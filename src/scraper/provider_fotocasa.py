@@ -25,10 +25,10 @@ def human_get(url: str, city: str):
     action_change_sort(browser)
     action_close_modal(browser)
     html = action_get_pages(browser, url_list)
+    browser.quit()
 
     print('url_list: {}'.format(url_list))
     transformer.transform_html_to_data(html)
-    browser.quit()
 
 
 def init_browser():

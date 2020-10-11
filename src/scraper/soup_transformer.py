@@ -1,10 +1,10 @@
 import logging
+from datetime import datetime
 
 from bs4 import BeautifulSoup
-from datetime import datetime
-import src.scraper.raw_transformer as transformer
+
 import src.scraper.constant as constant
-import src.scraper.storage as storage
+import src.scraper.raw_transformer as transformer
 
 
 def transform_html_to_data(html, data_list, datetime_now: datetime):
@@ -37,8 +37,6 @@ def transform_html_to_data(html, data_list, datetime_now: datetime):
 
             if not is_id_added(data_list, data['id'], data['scrap_date']):
                 data_list.append(data)
-
-    storage.list_to_csv(data_list, 'data')
 
 
 def get_raw_url(house_item):

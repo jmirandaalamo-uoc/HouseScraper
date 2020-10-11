@@ -3,6 +3,7 @@ import time
 
 from selenium.webdriver.common.keys import Keys
 import src.scraper.soup_transformer as transformer
+from src.scraper import storage
 from src.scraper.constant import *
 from fake_useragent import UserAgent
 from selenium.webdriver.chrome.options import Options
@@ -16,6 +17,7 @@ from datetime import datetime
 def human_get(url: str, city: str):
     url_list = []
     data_list = []
+    datetime_now = datetime.now()
 
     browser = init_browser()
 
@@ -27,11 +29,17 @@ def human_get(url: str, city: str):
     action_change_sort(browser)
     action_close_modal(browser)
     html = action_get_pages(browser, url_list)
+    transformer.transform_html_to_data(html, data_list, datetime_now)
+
+    # Go to next page and scroll. This can be put in a loop
+    action_next_page(browser)
+    html = action_get_pages(browser, url_list)
+    transformer.transform_html_to_data(html, data_list, datetime_now)
+
     browser.quit()
 
-    print('url_list: {}'.format(url_list))
-    datetime_now = datetime.now()
-    transformer.transform_html_to_data(html, data_list, datetime_now)
+    storage.list_to_csv(data_list, 'data')
+
 
 
 def init_browser():
@@ -92,7 +100,7 @@ def action_get_pages(browser, url_list: list):
     elem = browser.find_element_by_tag_name('body')
 
     # Hago AvPág 20 veces
-    no_of_pagedowns = 20
+    no_of_pagedowns = 11
 
     while no_of_pagedowns:
         elem.send_keys(Keys.PAGE_DOWN)
@@ -107,6 +115,13 @@ def action_get_pages(browser, url_list: list):
     html = browser.page_source
 
     return html
+
+
+def action_next_page(browser):
+    next_page = browser.find_element_by_xpath(build_path_for_next_page())
+    next_page.click()
+
+    time.sleep(SELENIUM_SLEEP_TIME)
 
 
 def build_path_for_cookies():
@@ -137,3 +152,7 @@ def build_path_for_modal():
 
 def build_path_for_pages():
     return '//a[@class="sui-LinkBasic sui-PaginationBasic-link"]'
+
+
+def build_path_for_next_page():
+    return '//a[ancestor::li[@class="sui-PaginationBasic-item sui-PaginationBasic-item--control"]]'

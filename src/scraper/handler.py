@@ -2,6 +2,7 @@ import src.scraper.provider_fotocasa as provider
 import src.scraper.requester as requester
 import src.scraper.constant as constant
 import src.scraper.soup_transformer as transformer
+from datetime import datetime
 
 if __name__ == "__main__":
     #provider.human_get(constant.BASE_URL, 'Barcelona Capital, Barcelona')
@@ -9,4 +10,5 @@ if __name__ == "__main__":
 
     with open('../test/resources/first_page_ok.html', 'r', encoding='utf-8') as reader:
         html = reader.read()
-        transformer.transform_html_to_data(html)
+        datetime_now = datetime.now()
+        transformer.transform_html_to_data(html, [], datetime_now)

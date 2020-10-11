@@ -7,6 +7,7 @@ from src.scraper.constant import *
 from fake_useragent import UserAgent
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
+from datetime import datetime
 
 
 # Use selenium to load a web
@@ -14,6 +15,7 @@ from selenium import webdriver
 # If you use another version you can download it from https://chromedriver.chromium.org/downloads
 def human_get(url: str, city: str):
     url_list = []
+    data_list = []
 
     browser = init_browser()
 
@@ -28,7 +30,8 @@ def human_get(url: str, city: str):
     browser.quit()
 
     print('url_list: {}'.format(url_list))
-    transformer.transform_html_to_data(html)
+    datetime_now = datetime.now()
+    transformer.transform_html_to_data(html, data_list, datetime_now)
 
 
 def init_browser():

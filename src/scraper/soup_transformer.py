@@ -35,6 +35,7 @@ def transform_html_to_data(html, data_list, datetime_now: datetime):
             data['url'] = constant.BASE_URL + raw_url
             transformer.transform_features_to_fields(data, raw_features)
 
+            # Avoid to add repeated houses
             if not is_id_added(data_list, data['id'], data['scrap_date']):
                 data_list.append(data)
 

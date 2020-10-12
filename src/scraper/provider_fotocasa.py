@@ -14,8 +14,7 @@ from datetime import datetime
 # Use selenium to load a web
 # IMPORTANT: The driver included is for Chrome version 86
 # If you use another version you can download it from https://chromedriver.chromium.org/downloads
-def human_get(url: str, city: str):
-    url_list = []
+def human_get(url: str, city: str, number_of_pages: int):
     data_list = []
     datetime_now = datetime.now()
 
@@ -28,18 +27,20 @@ def human_get(url: str, city: str):
     action_select_city(browser, city)
     action_change_sort(browser)
     action_close_modal(browser)
-    html = action_get_pages(browser, url_list)
+    html = action_get_page(browser)
     transformer.transform_html_to_data(html, data_list, datetime_now)
 
     # Go to next page and scroll. This can be put in a loop
-    action_next_page(browser)
-    html = action_get_pages(browser, url_list)
-    transformer.transform_html_to_data(html, data_list, datetime_now)
+    i = 1
+    while i < number_of_pages:
+        action_next_page(browser)
+        html = action_get_page(browser)
+        transformer.transform_html_to_data(html, data_list, datetime_now)
+        i += 1
 
     browser.quit()
 
     storage.list_to_csv(data_list, 'data')
-
 
 
 def init_browser():
@@ -96,7 +97,7 @@ def action_close_modal(browser):
     time.sleep(SELENIUM_SLEEP_TIME)
 
 
-def action_get_pages(browser, url_list: list):
+def action_get_page(browser):
     elem = browser.find_element_by_tag_name('body')
 
     # Hago AvPág 20 veces
@@ -108,17 +109,14 @@ def action_get_pages(browser, url_list: list):
         time.sleep(1)
         no_of_pagedowns -= 1
 
-    pages_from_paginator = browser.find_elements_by_xpath(build_path_for_pages())
-    for post in pages_from_paginator:
-        url_list.append(post.get_attribute('href'))
-
     html = browser.page_source
 
     return html
 
 
 def action_next_page(browser):
-    next_page = browser.find_element_by_xpath(build_path_for_next_page())
+    next_page_list = browser.find_elements_by_xpath(build_path_for_next_page())
+    next_page = next_page_list[len(next_page_list)-1]
     next_page.click()
 
     time.sleep(SELENIUM_SLEEP_TIME)

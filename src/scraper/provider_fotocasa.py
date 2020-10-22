@@ -123,8 +123,7 @@ def action_next_page(browser):
 
 
 def build_path_for_cookies():
-    return f'/html/body/div[{POS_FIRST}]/footer/div[{POS_SECOND}]/div/div/div/div/div[{POS_SECOND}]' \
-           f'/div/div[{POS_SECOND}]/button[{POS_SECOND}]'
+    return '//button[@class="sui-AtomButton sui-AtomButton--primary "]'
 
 
 def build_path_for_comprar():

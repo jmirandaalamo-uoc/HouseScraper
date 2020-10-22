@@ -15,22 +15,27 @@ from datetime import datetime
 # IMPORTANT: The driver included is for Chrome version 86
 # If you use another version you can download it from https://chromedriver.chromium.org/downloads
 def human_get(url: str, city: str, number_of_pages: int):
+    # Init
     data_list = []
     datetime_now = datetime.now()
 
     browser = init_browser()
 
+    # Go to the url
     browser.get(url)
     time.sleep(SELENIUM_SLEEP_TIME)
 
+    # Do actions to navigate through the houses
     action_accept_cookies(browser)
     action_select_city(browser, city)
     action_change_sort(browser)
     action_close_modal(browser)
+
+    # Get the html and transform the data
     html = action_get_page(browser)
     transformer.transform_html_to_data(html, data_list, datetime_now)
 
-    # Go to next page and scroll. This can be put in a loop
+    # Go to next page and scroll and repeat the process
     i = 1
     while i < number_of_pages:
         action_next_page(browser)
@@ -38,8 +43,10 @@ def human_get(url: str, city: str, number_of_pages: int):
         transformer.transform_html_to_data(html, data_list, datetime_now)
         i += 1
 
+    # Stop selenium
     browser.quit()
 
+    # Save the data into a csv
     storage.list_to_csv(data_list, 'data')
 
 
@@ -54,6 +61,7 @@ def init_browser():
     return browser
 
 
+# Action to accept the cookies
 def action_accept_cookies(browser):
     cookies_button = browser.find_elements_by_xpath(build_path_for_cookies())[0]
     cookies_button.click()
@@ -62,14 +70,7 @@ def action_accept_cookies(browser):
     time.sleep(SELENIUM_SLEEP_TIME)
 
 
-def action_select_comprar(browser):
-    alquilar_button = browser.find_elements_by_xpath(build_path_for_comprar)[0]
-    alquilar_button.click()
-
-    logging.info('Comprar selected')
-    time.sleep(SELENIUM_SLEEP_TIME)
-
-
+# Action to select the city
 def action_select_city(browser, city: str):
     placeholder_area = browser.find_element_by_xpath(build_path_for_city_placeholder())
     placeholder_area.send_keys(city)
@@ -83,6 +84,7 @@ def action_select_city(browser, city: str):
     time.sleep(SELENIUM_SLEEP_TIME)
 
 
+# Action to select the type of sorting
 def action_change_sort(browser):
     select_option = browser.find_element_by_xpath(build_path_for_sort())
     select_option.click()
@@ -90,6 +92,7 @@ def action_change_sort(browser):
     time.sleep(SELENIUM_SLEEP_TIME)
 
 
+# Action to close the modal that is opened
 def action_close_modal(browser):
     modal_news = browser.find_elements_by_xpath(build_path_for_modal())
     modal_news[len(modal_news) - 1].click()
@@ -97,6 +100,7 @@ def action_close_modal(browser):
     time.sleep(SELENIUM_SLEEP_TIME)
 
 
+# Action to scroll down and get the html code
 def action_get_page(browser):
     elem = browser.find_element_by_tag_name('body')
 
@@ -114,6 +118,7 @@ def action_get_page(browser):
     return html
 
 
+# Action to go to the next page
 def action_next_page(browser):
     next_page_list = browser.find_elements_by_xpath(build_path_for_next_page())
     next_page = next_page_list[len(next_page_list)-1]
@@ -122,34 +127,31 @@ def action_next_page(browser):
     time.sleep(SELENIUM_SLEEP_TIME)
 
 
+# Get the xpath for the cookies button
 def build_path_for_cookies():
     return '//button[@class="sui-AtomButton sui-AtomButton--primary "]'
 
 
-def build_path_for_comprar():
-    return f'/html/body/div[{POS_FIRST}]/div[{POS_SECOND}]/div[{POS_FIRST}]/div[{POS_FIRST}]/div[{POS_SECOND}]' \
-           f'/div[{POS_FIRST}]/div[{POS_FIRST}]/label'
-
-
+# Get the xpath for the city input
 def build_path_for_city_placeholder():
     return '//input[@class="sui-AtomInput-input sui-AtomInput-input-m"]'
 
 
+# Get the xpath for the search button
 def build_path_for_search_button():
     return '//button[@type="submit"]'
 
 
+# Get the xpath for sorting
 def build_path_for_sort():
     return '//option[@value="publicationDate,true"]'
 
 
+# Get the xpath for closing the modal
 def build_path_for_modal():
     return '//span[@class="sui-AtomIcon sui-AtomIcon--medium sui-AtomIcon--currentColor"]'
 
 
-def build_path_for_pages():
-    return '//a[@class="sui-LinkBasic sui-PaginationBasic-link"]'
-
-
+# Get the xpath for the next page
 def build_path_for_next_page():
     return '//a[ancestor::li[@class="sui-PaginationBasic-item sui-PaginationBasic-item--control"]]'

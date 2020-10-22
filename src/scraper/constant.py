@@ -12,3 +12,6 @@ POS_FIRST = '1'
 POS_SECOND = '2'
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+DEFAULT_CITY = 'Barcelona Capital, Barcelona'
+DEFAULT_PAGES = 5

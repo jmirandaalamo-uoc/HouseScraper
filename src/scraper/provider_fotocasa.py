@@ -58,7 +58,7 @@ def init_browser():
     user_agent = UserAgent()
     random_user_agent = user_agent.random
 
-    options.add_argument(f'user-agent={user_agent}')
+    options.add_argument(f'user-agent={random_user_agent}')
     browser = webdriver.Chrome(chrome_options=options, executable_path=r'../resources/selenium/chromedriver.exe')
     return browser
 

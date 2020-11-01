@@ -12,7 +12,8 @@ def transform_price(raw_price: str):
             price = raw_price \
                 .replace('.', '') \
                 .replace(' ', '') \
-                .replace('€', '')
+                .replace('€', '') \
+                .replace('/mes', '')
 
             price = int(price)
         except ValueError:

@@ -7,6 +7,7 @@ from src.scraper import storage
 from src.scraper.constant import *
 from fake_useragent import UserAgent
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium import webdriver
 from datetime import datetime
 
@@ -26,6 +27,7 @@ def human_get(url: str, city: str, number_of_pages: int):
     time.sleep(SELENIUM_SLEEP_TIME)
 
     # Do actions to navigate through the houses
+    action_select_rent(browser)
     action_accept_cookies(browser)
     action_select_city(browser, city)
     action_change_sort(browser)
@@ -59,6 +61,14 @@ def init_browser():
     options.add_argument(f'user-agent={user_agent}')
     browser = webdriver.Chrome(chrome_options=options, executable_path=r'../resources/selenium/chromedriver.exe')
     return browser
+
+
+# Action to change to rent
+def action_select_rent(browser):
+    rent_input = browser.find_element_by_xpath(build_path_for_rent())
+    rent_input.click()
+
+    time.sleep(SELENIUM_SLEEP_TIME)
 
 
 # Action to accept the cookies
@@ -104,14 +114,18 @@ def action_close_modal(browser):
 def action_get_page(browser):
     elem = browser.find_element_by_tag_name('body')
 
-    # Hago AvPág 20 veces
-    no_of_pagedowns = 11
+    # Scroll to the end of the page
+    no_of_pagedowns = 20
 
     while no_of_pagedowns:
         elem.send_keys(Keys.PAGE_DOWN)
 
         time.sleep(1)
         no_of_pagedowns -= 1
+
+    # Go to the paginator
+    ActionChains(browser).move_to_element(browser.find_element_by_xpath(build_path_for_paginator())).perform()
+    time.sleep(SELENIUM_SLEEP_TIME)
 
     html = browser.page_source
 
@@ -155,3 +169,12 @@ def build_path_for_modal():
 # Get the xpath for the next page
 def build_path_for_next_page():
     return '//a[ancestor::li[@class="sui-PaginationBasic-item sui-PaginationBasic-item--control"]]'
+
+
+# Get the xpath for the paginator
+def build_path_for_paginator():
+    return '//div[@class="re-Pagination"]'
+
+
+def build_path_for_rent():
+    return '//label[ancestor::div[@class="re-Search-selectorContainer re-Search-selectorContainer--rent"]]'

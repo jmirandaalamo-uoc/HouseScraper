@@ -57,3 +57,11 @@ def transform_features_to_fields(data: dict, feature_list: list):
 # Convert a datetime to string
 def transform_date_to_string(date: datetime):
     return date.strftime(constant.DATETIME_FORMAT)
+
+
+# Convert the descrition
+def transform_description(description: str):
+    if description is not None:
+        return description.replace('\n', ' ')
+
+    return ''

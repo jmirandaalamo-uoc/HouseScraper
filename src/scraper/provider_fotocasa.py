@@ -27,8 +27,8 @@ def human_get(url: str, city: str, number_of_pages: int):
     time.sleep(SELENIUM_SLEEP_TIME)
 
     # Do actions to navigate through the houses
-    action_select_rent(browser)
     action_accept_cookies(browser)
+    action_select_rent(browser)
     action_select_city(browser, city)
     action_change_sort(browser)
     action_close_modal(browser)

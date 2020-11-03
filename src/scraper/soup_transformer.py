@@ -32,12 +32,12 @@ def transform_html_to_data(html, data_list, datetime_now: datetime):
             data['id'] = transformer.transform_url_to_id(raw_url)
             data['scrap_date'] = transformer.transform_date_to_string(datetime_now)
             data['price'] = transformer.transform_price(raw_price)
-            data['description'] = transformer.transform_description(raw_description)
             data['location'] = raw_location
             data['type'] = raw_type
             data['phone'] = raw_phone
             data['url'] = constant.BASE_URL + raw_url
             transformer.transform_features_to_fields(data, raw_features)
+            data['description'] = transformer.transform_description(raw_description)
 
             # Avoid to add repeated houses
             if not is_id_added(data_list, data['id'], data['scrap_date']):
